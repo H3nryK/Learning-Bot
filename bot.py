@@ -1,3 +1,4 @@
+# Importing necessary libraries
 import numpy as np
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
@@ -32,6 +33,11 @@ class Chatbot:
         self.model.fit(padded_sequences, labels, epochs=10)
     
     def generate_response(self, input_text):
+        # Check if the input text matches any predefined responses
+        if input_text in self.responses:
+            return self.responses[input_text]
+        
+        # If not, use the trained model to generate a response
         sequence = self.tokenizer.texts_to_sequences([input_text])
         padded_sequence = pad_sequences(sequence, maxlen=10, padding='post')
         prediction = self.model.predict(padded_sequence)[0][0]
@@ -59,28 +65,23 @@ class Chatbot:
                 self.learn(user_input, feedback)
                 print("Chatbot: Thank you for teaching me.")
 
-# Additional diverse and relevant training data
-training_data = {
-    "hi": 1,
-    "how are you": 1,
-    "bye": 1,
-    "what's your name?": 1,
-    "tell me a joke": 0,
-    "what's the weather like today?": 0,
-    "can you recommend a good book?": 0,
-    "how do I bake a cake?": 0
+# Dictionary of predefined responses
+responses = {
+    "hi": "Hello!",
+    "how are you": "I'm good, thank you!",
+    "bye": "See you later",
+    "default": "I'm not sure how to respond to that."
 }
 
 # Initialize the chatbot and train model
 chatbot = Chatbot()
-chatbot.prepare_data(training_data.keys())
+chatbot.prepare_data(responses.keys())
 chatbot.build_model()
 
-# Extract input_texts and labels from training_data
-input_texts = list(training_data.keys())
-labels = list(training_data.values())
+# Dummy training data for demonstration
+input_texts = ["hi", "how are you?", "what's your name?"]
+labels = [1, 1, 1] # Positive feedback for all initial responses
 
-# Train the model with the modified training data
 chatbot.train_model(input_texts, labels)
 
 # Interact with the chatbot
