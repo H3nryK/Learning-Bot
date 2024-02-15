@@ -42,9 +42,9 @@ class Chatbot:
         padded_sequence = pad_sequences(sequence, maxlen=10, padding='post')
         prediction = self.model.predict(padded_sequence)[0][0]
         if prediction >= 0.5:
-            return "Yes"
+            return self.response
         else:
-            return "No"
+            return self.response
         
     def learn(self, input_text, feedback):
         self.responses[input_text] = feedback
@@ -56,11 +56,9 @@ class Chatbot:
             if user_input == 'exit':
                 print("Chatbot: Goodbye!")
                 break
-            if user_input in self.responses:
-                response = self.responses[user_input]
-                print("Chatbot: ", response)
-            else:
-                print("Chatbot: I'm not sure how to respond. Can you please teach me?")
+            response = self.generate_response(user_input)
+            print("Chatbot:", response)
+            if response == "I'm not sure how to respond. Can you please teach me?":
                 feedback = input("You: ")
                 self.learn(user_input, feedback)
                 print("Chatbot: Thank you for teaching me.")
