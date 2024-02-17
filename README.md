@@ -1,4 +1,4 @@
-# Simple Chatbot with Learning Capabilities
+# Chatbot with Learning Capabilities
 
 This is a simple chatbot implemented in Python using the Keras library for natural language processing. The chatbot is capable of engaging in conversations with users and learning from their feedback to improve its responses over time.
 
