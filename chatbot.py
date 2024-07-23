@@ -186,7 +186,7 @@ def predict(model, sentence, source_vocab, target_vocab, max_length=50):
     model.eval()
     tokens = source_vocab.tokenize(preprocess_sentence(sentence))
     tokens = ['<SOS>'] + tokens + ['<EOS>']
-    src_indexes = [source_vocab.stoi[token] for token in tokens]
+    src_indexes = [source_vocab.stoi.get(token, source_vocab.stoi['<UNK>']) for token in tokens]
     src_tensor = torch.LongTensor(src_indexes).unsqueeze(0).to(device)
     
     encoder_outputs, hidden = model.encoder(src_tensor)
@@ -262,6 +262,17 @@ if __name__ == "__main__":
     for epoch in range(N_EPOCHS):
         train_loss = train(model, dataloader, optimizer, criterion, CLIP)
         print(f'Epoch: {epoch+1:02} | Train Loss: {train_loss:.3f}')
+        
+    # Save the model
+    torch.save(model.state_dict(), 'chatbot_model.pth')
+    
+    # Save the vocabularies
+    torch.save({
+        'source_vocab': source_vocab,
+        'target_vocab': target_vocab
+    }, 'vocab.pth')
+
+    print("Model and vocabularies saved.")
 
     # Chat loop
     print("Chat with the bot (type 'quit' to exit):")
